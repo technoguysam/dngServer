@@ -1,0 +1,17 @@
+{
+  "name": "DrawandGuess",
+  "version": "0.0.1",
+  "description": "A sample Node.js Game",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongoose": "^5.4.1",
+    "nodemon": "^1.18.9",
+    "socket.io": "^2.2.0"
+  },
+  "author": "Samundra Adhikari",
+  "license": "MIT"
+}
