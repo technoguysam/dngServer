@@ -9,5 +9,13 @@ router.get('/api-status', (req, res) =>
     })
 );
 
+// api request for the username set
+router.post('/joinGame', (req, res) =>
+    res.json({
+        status: "ok"
+    })
+);
+
+
 module.exports = router;
 
