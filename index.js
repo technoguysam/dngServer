@@ -100,8 +100,9 @@ io.on('connection', (socket) => {
                                 finish(userData, roomData);
                             }, 1000);
                         } else {
+                            console.log(userData);
                             io.to(roomData._id).emit('getmessage', {
-                                user: userData.name,
+                                user: userData.username,
                                 message: message
                             });
                         }
