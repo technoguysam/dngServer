@@ -1,4 +1,4 @@
-const RoomDB = require('roomdb');
+const RoomDB = require('./roomdb');
 var mongoose = require('mongoose');
 var dburl = 'mongodb://localhost/drawandguess';
 mongoose.connect(dburl);
@@ -6,11 +6,11 @@ var db = mongoose.connection;
 
 const numofuser = 2;
 
-async function joinRoom(name, cword) {
+async function joinRoom(fid, cword) {
     var rid = null;
     var currentRoom = await this.findRoom({cuser: {$lt: numofuser}});
     if (currentRoom === 0) {
-        await addRoom(name, cword)
+        await addRoom(fid, cword)
             .then(function (roomid) {
                 rid = roomid;
             });
@@ -24,11 +24,11 @@ async function joinRoom(name, cword) {
     return rid;
 }
 
-async function addRoom(name, cword) {
+async function addRoom(fid, cword) {
     var newroom = await new RoomDB({
         cuser: 1,
         cword: cword,
-        drawer: name,
+        drawer: fid,
         roomname: generateRoomId()
     });
     var saved = await newroom.save();

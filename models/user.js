@@ -1,25 +1,28 @@
-const UserDB = require('userdb');
+const UserDB = require('./userdb');
 var mongoose = require('mongoose');
 var dburl = 'mongodb://localhost/drawandguess';
 mongoose.connect(dburl);
 var db = mongoose.connection;
 
-async function addUser(name, sid, rid,) {
+async function addUser(name, fid, image, sid) {
     var result = null;
-    await this.findUser({'name': name})
+    await this.findUser({'fid': fid})
         .then(async function (currentUser) {
             if (currentUser === 0) {
-                var newuser = await new UserDB({
-                    name: name,
+                var newUser = await new UserDB({
+                    username: name,
+                    fid: fid,
+                    fPicture: image,
                     sid: sid,
-                    rid: rid,
+                    rid: null,
                 });
                 result = 1;
-                await newuser.save();
+                await newUser.save();
             } else {
                 result = 0;
             }
         });
+    console.log(result);
     return result;
 }
 

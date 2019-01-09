@@ -1,53 +1,18 @@
-import user from '../models/user';
-import room from '../models/room';
-
-function load(req, res, next, id) {
-    Task.findById(id)
-        .exec()
-        .then((task) => {
-            req.dbTask = task;
-            return next();
-        }, (e) => next(e));
-}
-
-function get(req, res) {
-    return res.json(req.dbTask);
-}
+var User = require('../models/user');
+var Room = require('../models/room');
+const crypto = require('crypto');
 
 function create(req, res, next) {
-    Task.create({
-        user: req.body.user,
-        description: req.body.description
+    console.log('data was here');
+    console.log(req.body);
+    User.createUser({
+        username: req.body.data.name,
+        fid: req.body.data.id,
+        fPicture: req.body.data.image
     })
         .then((savedTask) => {
             return res.json(savedTask);
         }, (e) => next(e));
 }
 
-function update(req, res, next) {
-    const task = req.dbTask;
-    Object.assign(task, req.body);
-
-    task.save()
-        .then(() => res.sendStatus(204),
-            (e) => next(e));
-}
-
-function list(req, res, next) {
-    const {limit = 50, skip = 0} = req.query;
-    Task.find()
-        .skip(skip)
-        .limit(limit)
-        .exec()
-        .then((tasks) => res.json(tasks),
-            (e) => next(e));
-}
-
-function remove(req, res, next) {
-    const task = req.dbTask;
-    task.remove()
-        .then(() => res.sendStatus(204),
-            (e) => next(e));
-}
-
-export default {load, get, create, update, list, remove};
+module.exports.create = create;
