@@ -19,7 +19,7 @@ async function addUser(name, fid, image, sid) {
                 result = 1;
                 await newUser.save();
             } else {
-                result = 0;
+                result = await updateUser({fid: fid}, {sid: sid});
             }
         });
     console.log(result);

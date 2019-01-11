@@ -1,3 +1,4 @@
+//ssh -R sammy:80:localhost:3000 serveo.net
 const express = require('express');
 const routes = require('./routes/index');
 var cors = require('cors');
@@ -61,6 +62,10 @@ io.on('connection', (socket) => {
     socket.on('deleteUser', async function (username) {
         User.deleteUser({name:username});
         console.log('deleteUser','user deleted');
+    });
+
+    socket.on('clearCanvas', async function (rid) {
+        io.to(rid).emit('clear');
     });
 
     socket.on('fetchRoomInfo', async function () {
@@ -160,7 +165,8 @@ async function removeUsers(roomId) {
 }
 
 function getRandomWord() {
-    var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone'];
+    var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone', 'people', 'art', 'computer',
+    'music', 'television', 'camera', 'road', 'river', 'mountain', 'book', 'cigarette', 'money', 'car', 'cloud', 'guitar', 'pen'];
     return words[Math.floor(Math.random() * words.length)];
 }
 
