@@ -7,6 +7,7 @@ var db = mongoose.connection;
 const numofuser = 2;
 
 async function joinRoom(fid, cword) {
+    cword = cword.toUpperCase();
     var rid = null;
     var currentRoom = await this.findRoom({cuser: {$lt: numofuser}});
     if (currentRoom === 0) {
