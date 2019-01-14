@@ -5,7 +5,6 @@ mongoose.connect(dburl);
 var db = mongoose.connection;
 
 async function addUser(name, fid, image, sid) {
-    console.log(fid);
     var result = null;
     await this.findUser({'fid': fid})
         .then(async function (currentUser) {
@@ -33,7 +32,6 @@ async function updateUser(conditionArr, paramArr) {
         .then(function (err) {
             result = 1;
         });
-    console.log('update',result);
     return result;
 }
 

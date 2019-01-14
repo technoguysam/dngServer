@@ -26,6 +26,7 @@ async function joinRoom(fid, cword) {
 }
 
 async function addRoom(fid, cword) {
+    console.log('first User')
     var newroom = await new RoomDB({
         cuser: 1,
         cword: cword,
