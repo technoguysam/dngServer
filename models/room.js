@@ -14,7 +14,7 @@ const numofuser = 2;
 async function joinRoom(fid, cword) {
     cword = cword.toUpperCase();
     var rid = null;
-    var currentRoom = await this.findRoom({cuser: {$lt: numofuser}});
+    var currentRoom = await this.findRoom({$and: [ {cuser: {$lt: numofuser}},{contextid: null}]});
     if (currentRoom === 0) {
         await addRoom(fid, cword)
             .then(function (roomid) {
