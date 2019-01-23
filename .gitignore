@@ -1,3 +1,5 @@
 node_modules/
 .idea/
 .git
+nodemon.sh
+server.sh

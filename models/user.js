@@ -1,9 +1,13 @@
 const UserDB = require('./userdb');
 var mongoose = require('mongoose');
 var dburl = 'mongodb://localhost/drawandguess';
-mongoose.connect(dburl);
+mongoose.connect(dburl, { useNewUrlParser: true });
 var db = mongoose.connection;
 
+/*
+* this function adds the user provided the
+* name, facebook id, image and session id
+*/
 async function addUser(name, fid, image, sid) {
     var result = null;
     await this.findUser({'fid': fid})
@@ -26,6 +30,11 @@ async function addUser(name, fid, image, sid) {
     return result;
 }
 
+/*
+* this function updates the user
+* provided the condition to find the data
+* and parameters to update that data
+*/
 async function updateUser(conditionArr, paramArr) {
     var result = null;
     await UserDB.findOneAndUpdate(conditionArr, paramArr, null)
@@ -35,6 +44,11 @@ async function updateUser(conditionArr, paramArr) {
     return result;
 }
 
+/*
+* this function finds the user provided
+* the condition to find the
+* user
+*/
 async function findUser(conditionArr) {
     var result = null;
     await UserDB.findOne(conditionArr).then(function (user) {
@@ -48,6 +62,11 @@ async function findUser(conditionArr) {
     return result;
 }
 
+/*
+* this function finds the multiple users
+* provided the condition given and return
+* as an array
+*/
 async function findUserMultiple(conditionArr) {
     var result = null;
     await UserDB.find(conditionArr).then(function (user) {
@@ -61,6 +80,10 @@ async function findUserMultiple(conditionArr) {
     return result;
 }
 
+/*
+* this function deletes the user
+* provided the condition array
+*/
 async function deleteUser(conditionArr) {
     var process = await UserDB.deleteOne(conditionArr);
     return process.n;
