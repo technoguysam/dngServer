@@ -6,7 +6,7 @@ var db = mongoose.connection;
 
 const numofuser = 2;
 
-/*
+/**
 * This function finds the room where there is
 * no two users and calls the room create function if
 * there is no room available
@@ -14,7 +14,7 @@ const numofuser = 2;
 async function joinRoom(fid, cword) {
     cword = cword.toUpperCase();
     var rid = null;
-    var currentRoom = await this.findRoom({$and: [ {cuser: {$lt: numofuser}},{contextid: null}]});
+    var currentRoom = await findRoom({$and: [ {cuser: {$lt: numofuser}},{contextid: null}]});
     if (currentRoom === 0) {
         await addRoom(fid, cword)
             .then(function (roomid) {
@@ -30,7 +30,7 @@ async function joinRoom(fid, cword) {
     return rid;
 }
 
-/*
+/**
 * this function finds the room with the specific
 * context and if not found create a room with
 * specific context
@@ -38,7 +38,7 @@ async function joinRoom(fid, cword) {
 async function joinRoomContext(fid, cword, contextId) {
     cword = cword.toUpperCase();
     var rid = null;
-    var currentRoom = await this.findRoom({contextid: contextId});
+    var currentRoom = await findRoom({contextid: contextId});
     if (currentRoom === 0) {
         await addRoomContext(fid, cword ,contextId)
             .then(function (roomid) {
@@ -54,7 +54,7 @@ async function joinRoomContext(fid, cword, contextId) {
     return rid;
 }
 
-/*
+/**
 * This function adds the room given facebook id
 * of the first user to the room
 */
@@ -70,7 +70,7 @@ async function addRoom(fid, cword) {
     return saved._id;
 }
 
-/*
+/**
 * this function adds the room with context id
 * given facebook id of the first user, current word
 * and context id
@@ -88,7 +88,7 @@ async function addRoomContext(fid, cword, contextId) {
     return saved._id;
 }
 
-/*
+/**
 * this function generates the 4 digit
 * random number to be assigned to the
 * room as an room id
@@ -97,7 +97,7 @@ function generateRoomId() {
     return (Math.floor(1000 + Math.random() * 9000));
 }
 
-/*
+/**
 * this function finds room and return room information
 * according to the provided condition array
 */
@@ -114,7 +114,7 @@ async function findRoom(conditionArr) {
     return result;
 }
 
-/*
+/**
 * this function updates the room by
 * finding the room and with condition and
 * update the value given in conditionarr
@@ -128,7 +128,7 @@ async function updateRoom(condition, conditionArr) {
     return result;
 }
 
-/*
+/**
 * this function deletes the user
 * according to the condition provided
 */

@@ -4,7 +4,7 @@ var dburl = 'mongodb://localhost/drawandguess';
 mongoose.connect(dburl, { useNewUrlParser: true });
 var db = mongoose.connection;
 
-/*
+/**
 * this function adds the user provided the
 * name, facebook id, image and session id
 */
@@ -30,7 +30,7 @@ async function addUser(name, fid, image, sid) {
     return result;
 }
 
-/*
+/**
 * this function updates the user
 * provided the condition to find the data
 * and parameters to update that data
@@ -44,7 +44,7 @@ async function updateUser(conditionArr, paramArr) {
     return result;
 }
 
-/*
+/**
 * this function finds the user provided
 * the condition to find the
 * user
@@ -62,7 +62,7 @@ async function findUser(conditionArr) {
     return result;
 }
 
-/*
+/**
 * this function finds the multiple users
 * provided the condition given and return
 * as an array
@@ -80,7 +80,7 @@ async function findUserMultiple(conditionArr) {
     return result;
 }
 
-/*
+/**
 * this function deletes the user
 * provided the condition array
 */

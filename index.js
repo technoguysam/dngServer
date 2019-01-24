@@ -14,70 +14,68 @@ app.use('/api', routes);
 
 var User = require('./models/user');
 var Room = require('./models/room');
+var DrawData = require('./models/drawdata');
 
 const gameTime = 20000000;
 var games = [];
 
-/*
-* Websocket initialises and start listening in this method
-*/
+/**
+ * Websocket initialises and start listening in this method
+ */
 io.on('connection', (socket) => {
     console.log('user connected');
     var sid = socket.id;
     var result = null;
     var roomid = null;
 
-    /*
-    * When client sends the Join request it accepts the parameters and send result as 0 and 1
-    */
+    /**
+     * When client sends the Join request it accepts the parameters and send result as 0 and 1
+     */
     socket.on('join', async function (name, fid, image, contextId, fn) {
         var returnVal = await User.addUser(name, fid, image, sid);
         var rid;
-        if (contextId !== '') {
-            console.log('contextid found', contextId);
-            if (returnVal) {
+        if (returnVal) {
+            if (contextId !== '') {
+                console.log('contextid found', contextId);
                 rid = await Room.joinRoomContext(fid, getRandomWord(), contextId);
                 roomid = rid;
                 await socket.join(rid);
                 await User.updateUser({fid: fid}, {rid: rid});
-                startGame(rid, sid, null);
+                start = startGame(rid, sid, null);
                 result = returnVal;
             } else {
-                result = 0;
-            }
-        } else {
-            if (returnVal) {
                 rid = await Room.joinRoom(fid, getRandomWord());
                 roomid = rid;
                 await socket.join(rid);
                 await User.updateUser({fid: fid}, {rid: rid});
-                startGame(rid, sid, null);
+                start = startGame(rid, sid, null);
                 result = returnVal;
-            } else {
-                result = 0;
             }
+        } else {
+            result = 0;
         }
         await fn(result);
-    });
+    })
+    ;
 
-    /*
-    * Deletes the user
-    */
+    /**
+     * Deletes the user
+     */
     socket.on('deleteUser', async function (username) {
         User.deleteUser({name: username});
         console.log('deleteUser', 'user deleted');
     });
 
-    /*
-    * Clear the canvas of respective Room id
-    */
+    /**
+     * Clear the canvas of respective Room id
+     */
     socket.on('clearCanvas', async function (rid) {
         io.to(rid).emit('clear');
     });
 
-    /*
-    * Fetch the Room Information after and before the game starts
-    */
+    /**
+     * Fetch the Room Information after and before the game starts
+     */
     socket.on('fetchRoomInfo', async function () {
         await User.findUser({'sid': sid})
             .then(async function (userData) {
@@ -88,9 +86,9 @@ io.on('connection', (socket) => {
             });
     });
 
-    /*
-    * It disconnects and end the game after a user left the game
-    */
+    /**
+     * It disconnects and end the game after a user left the game
+     */
     socket.on('disconnect', async function () {
         var stop = startGame(null, null, 'stop');
         var userdata = await User.findUser({'sid': sid});
@@ -100,11 +98,11 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
     });
 
-    /*
-    * It gets the message sent by the user and forwards to the
-    * respective members of the room and also checks for the
-    * input of the correct value of the room guessing word
-    */
+    /**
+     * It gets the message sent by the user and forwards to the
+     * respective members of the room and also checks for the
+     * input of the correct value of the room guessing word
+     */
     socket.on('message', async function (message) {
         await User.findUser({'sid': sid})
             .then(async function (userData) {
@@ -130,10 +128,10 @@ io.on('connection', (socket) => {
             })
     });
 
-    /*
-    * This receives the coordinates of the line to be drawn and forwards to the
-    * respetive room id
-    */
+    /**
+     * This receives the coordinates of the line to be drawn and forwards to the
+     * respetive room id
+     */
     socket.on('coordinates', async function (value) {
         await User.findUser({'sid': sid})
             .then(async function (userData) {
@@ -147,66 +145,74 @@ io.on('connection', (socket) => {
                     })
             })
     });
-});
 
-/*
-* This function starts the game and initiates the
-* game time for individual game room
-*/
-async function startGame(rid, sid, stop) {
-    if (stop === 'stop') {
-        clearTimeout(games[rid]);
-    } else {
-        await Room.findRoom({_id: rid})
-            .then(async function (roomData) {
-                if (roomData.cuser >= 2) {
-                    let userData = await User.findUser({'sid': sid});
-                    io.to(rid).emit('start', roomData);
-                    var game = setTimeout(function () {
-                        finish(userData, roomData);
-                    }, gameTime);
-                    games[rid] = game;
-                }
-            });
+    /**
+     * This gets the image coordinates and save the coordinates
+     * to the database along with user facebook id and
+     * context id
+     */
+    socket.on('saveComposedDrawing', async function (data, fid, contextId) {
+        DrawData.addData(fid, data, contextId);
+    });
+
+    /**
+     * This function starts the game and initiates the
+     * game time for individual game room
+     */
+    async function startGame(rid, sid, stop) {
+        if (stop === 'stop') {
+            clearTimeout(games[rid]);
+        } else {
+            await Room.findRoom({_id: rid})
+                .then(async function (roomData) {
+                    if (roomData.cuser >= 2) {
+                        let userData = await User.findUser({'sid': sid});
+                        io.to(rid).emit('start', roomData);
+                        var game = setTimeout(function () {
+                            finish(userData, roomData);
+                        }, gameTime);
+                        games[rid] = game;
+                    }
+                });
+        }
     }
-}
 
-/*
-* this function stops the game
-* and requires the userdata and roomdata
-* to stop the game and removes the user and
-* delets the room
-*/
-async function finish(userdata, roomData) {
-    startGame(null, null, 'stop');
-    await removeUsers(roomData._id);
-    await Room.deleteRoom({roomname: roomData.roomname});
-    io.to(userdata.rid).emit('stop', 'Game Over');
-}
+    /**
+     * this function stops the game
+     * and requires the userdata and roomdata
+     * to stop the game and removes the user and
+     * delets the room
+     */
+    async function finish(userdata, roomData) {
+        startGame(null, null, 'stop');
+        await removeUsers(roomData._id);
+        await Room.deleteRoom({roomname: roomData.roomname});
+        io.to(userdata.rid).emit('stop', 'Game Over');
+    }
 
-/*
-* this function removes the users
-* in a room
-*/
-async function removeUsers(roomId) {
-    await User.findUserMultiple({rid: roomId})
-        .then(function (userData) {
-            userData.forEach(function (users) {
-                res = User.deleteUser({name: users.name});
+    /**
+     * this function removes the users
+     * in a room
+     */
+    async function removeUsers(roomId) {
+        await User.findUserMultiple({rid: roomId})
+            .then(function (userData) {
+                userData.forEach(function (users) {
+                    res = User.deleteUser({name: users.name});
+                })
             })
-        })
-}
+    }
 
-/*
-* this function provides the random word
-* using default random method
-* from the given array of words
-*/
-function getRandomWord() {
-    var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone', 'people', 'art', 'computer',
-        'music', 'television', 'camera', 'road', 'river', 'mountain', 'book', 'cigarette', 'money', 'car', 'cloud', 'guitar', 'pen'];
-    return words[Math.floor(Math.random() * words.length)];
-}
+    /**
+     * this function provides the random word
+     * using default random method
+     * from the given array of words
+     */
+    function getRandomWord() {
+        var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone', 'people', 'art', 'computer',
+            'music', 'television', 'camera', 'road', 'river', 'mountain', 'book', 'cigarette', 'money', 'car', 'cloud', 'guitar', 'pen'];
+        return words[Math.floor(Math.random() * words.length)];
+    }
 
-server.listen(process.env.PORT || 3000);
-console.log('server started and listening on port 3000');
+    server.listen(process.env.PORT || 3000);
+    console.log('server started and listening on port 3000');
