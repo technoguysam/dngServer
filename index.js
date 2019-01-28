@@ -151,68 +151,79 @@ io.on('connection', (socket) => {
      * to the database along with user facebook id and
      * context id
      */
-    socket.on('saveComposedDrawing', async function (data, fid, contextId) {
-        DrawData.addData(fid, data, contextId);
+    socket.on('saveComposedDrawing', function (data, fid, contextId) {
+        let add = DrawData.addData(fid, data, contextId);
     });
 
     /**
-     * This function starts the game and initiates the
-     * game time for individual game room
+     * This gets the context id and fetch the data from drawing data
+     * table and send the response
      */
-    async function startGame(rid, sid, stop) {
-        if (stop === 'stop') {
-            clearTimeout(games[rid]);
-        } else {
-            await Room.findRoom({_id: rid})
-                .then(async function (roomData) {
-                    if (roomData.cuser >= 2) {
-                        let userData = await User.findUser({'sid': sid});
-                        io.to(rid).emit('start', roomData);
-                        var game = setTimeout(function () {
-                            finish(userData, roomData);
-                        }, gameTime);
-                        games[rid] = game;
-                    }
-                });
-        }
-    }
+    socket.on('fetchDrawingData', async function (cid, fn) {
+        let fetchedData = await DrawData.findData({contextId:cid});
+        fn(JSON.parse(fetchedData));
+    });
 
-    /**
-     * this function stops the game
-     * and requires the userdata and roomdata
-     * to stop the game and removes the user and
-     * delets the room
-     */
-    async function finish(userdata, roomData) {
-        startGame(null, null, 'stop');
-        await removeUsers(roomData._id);
-        await Room.deleteRoom({roomname: roomData.roomname});
-        io.to(userdata.rid).emit('stop', 'Game Over');
-    }
+});
 
-    /**
-     * this function removes the users
-     * in a room
-     */
-    async function removeUsers(roomId) {
-        await User.findUserMultiple({rid: roomId})
-            .then(function (userData) {
-                userData.forEach(function (users) {
-                    res = User.deleteUser({name: users.name});
-                })
+/**
+ * This function starts the game and initiates the
+ * game time for individual game room
+ */
+async function startGame(rid, sid, stop) {
+    if (stop === 'stop') {
+        clearTimeout(games[rid]);
+    } else {
+        await Room.findRoom({_id: rid})
+            .then(async function (roomData) {
+                if (roomData.cuser >= 2) {
+                    let userData = await User.findUser({'sid': sid});
+                    io.to(rid).emit('start', roomData);
+                    var game = setTimeout(function () {
+                        finish(userData, roomData);
+                    }, gameTime);
+                    games[rid] = game;
+                }
+            });
+    }
+}
+
+/**
+ * this function stops the game
+ * and requires the userdata and roomdata
+ * to stop the game and removes the user and
+ * delets the room
+ */
+async function finish(userdata, roomData) {
+    startGame(null, null, 'stop');
+    await removeUsers(roomData._id);
+    await Room.deleteRoom({roomname: roomData.roomname});
+    io.to(userdata.rid).emit('stop', 'Game Over');
+}
+
+/**
+ * this function removes the users
+ * in a room
+ */
+async function removeUsers(roomId) {
+    await User.findUserMultiple({rid: roomId})
+        .then(function (userData) {
+            userData.forEach(function (users) {
+                res = User.deleteUser({name: users.name});
             })
-    }
+        })
+}
 
-    /**
-     * this function provides the random word
-     * using default random method
-     * from the given array of words
-     */
-    function getRandomWord() {
-        var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone', 'people', 'art', 'computer',
-            'music', 'television', 'camera', 'road', 'river', 'mountain', 'book', 'cigarette', 'money', 'car', 'cloud', 'guitar', 'pen'];
-        return words[Math.floor(Math.random() * words.length)];
-    }
+/**
+ * this function provides the random word
+ * using default random method
+ * from the given array of words
+ */
+function getRandomWord() {
+    var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone', 'people', 'art', 'computer',
+        'music', 'television', 'camera', 'road', 'river', 'mountain', 'book', 'cigarette', 'money', 'car', 'cloud', 'guitar', 'pen'];
+    return words[Math.floor(Math.random() * words.length)];
+}
 
-    server.listen(process.env.PORT || 3000);
-    console.log('server started and listening on port 3000');
+server.listen(process.env.PORT || 3000);
+console.log('server started and listening on port 3000');

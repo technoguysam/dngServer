@@ -12,10 +12,29 @@ var db = mongoose.connection;
 async function addData(fid, data, contextId) {
     var newdata = await new DrawDataDB({
         fid: fid,
-        data: data,
+        data: JSON.stringify(data),
         contextId: contextId
     });
     var saved = await newdata.save();
+}
+
+/**
+ * this function gets the context id and fetch
+ * associated data from the table and send the
+ * response
+ */
+async function findData(conditionArr) {
+    var result = null;
+    await DrawDataDB.findOne(conditionArr)
+        .then(function (ddata) {
+            console.dir(ddata);
+            if (ddata) {
+                result = ddata.data;
+            } else {
+                result = 0;
+            }
+        });
+    return result;
 }
 
 /**
@@ -28,4 +47,5 @@ async function deleteData(conditionArr) {
 }
 
 module.exports.addData = addData;
+module.exports.findData = findData;
 module.exports.deleteData = deleteData;
