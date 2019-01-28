@@ -67,13 +67,6 @@ io.on('connection', (socket) => {
     });
 
     /**
-     * Clear the canvas of respective Room id
-     */
-    socket.on('clearCanvas', async function (rid) {
-        io.to(rid).emit('clear');
-    });
-
-    /**
      * Fetch the Room Information after and before the game starts
      */
     socket.on('fetchRoomInfo', async function () {
@@ -151,8 +144,8 @@ io.on('connection', (socket) => {
      * to the database along with user facebook id and
      * context id
      */
-    socket.on('saveComposedDrawing', function (data, fid, contextId) {
-        let add = DrawData.addData(fid, data, contextId);
+    socket.on('saveComposedDrawing', function (data, fid, contextId, word) {
+        let add = DrawData.addData(fid, data, contextId, word);
     });
 
     /**
@@ -161,7 +154,16 @@ io.on('connection', (socket) => {
      */
     socket.on('fetchDrawingData', async function (cid, fn) {
         let fetchedData = await DrawData.findData({contextId:cid});
-        fn(JSON.parse(fetchedData));
+        fn(JSON.parse(fetchedData.result),fetchedData.word);
+    });
+
+    /**
+     * This gets the request and send the random word to
+     * the requester
+     */
+    socket.on('randomword', async function (fn) {
+        let randomWord = getRandomWord();
+        fn(randomWord);
     });
 
 });
@@ -226,4 +228,4 @@ function getRandomWord() {
 }
 
 server.listen(process.env.PORT || 3000);
-console.log('server started and listening on port 3000');
+console.log('server started and listening on port 3090');

@@ -9,11 +9,12 @@ var db = mongoose.connection;
  * user along with the facebookid, draw data and
  * context id
  */
-async function addData(fid, data, contextId) {
+async function addData(fid, data, contextId, word) {
     var newdata = await new DrawDataDB({
         fid: fid,
         data: JSON.stringify(data),
-        contextId: contextId
+        contextId: contextId,
+        cword: word
     });
     var saved = await newdata.save();
 }
@@ -25,16 +26,18 @@ async function addData(fid, data, contextId) {
  */
 async function findData(conditionArr) {
     var result = null;
+    var word = null;
     await DrawDataDB.findOne(conditionArr)
         .then(function (ddata) {
             console.dir(ddata);
             if (ddata) {
                 result = ddata.data;
+                word = ddata.cword;
             } else {
                 result = 0;
             }
         });
-    return result;
+    return {result: result,word: word};
 }
 
 /**

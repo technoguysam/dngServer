@@ -1,15 +1,19 @@
 var mongoose = require('mongoose');
 
 var drawDataSchema = mongoose.Schema({
-    fid:{
+    fid: {
         type: String,
         default: null
     },
-    data:{
+    data: {
         type: String,
         default: null
     },
     contextId: {
+        type: String,
+        default: null
+    },
+    cword: {
         type: String,
         default: null
     },

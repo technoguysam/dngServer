@@ -8,10 +8,5 @@ router.get('/test', (req, res) =>
         status: "ok"
     })
 );
-
-router.route('/createUser')
-/** POST /api/tasks - Create new user*/
-    .post(taskController.create);
-
 module.exports = router;
 
