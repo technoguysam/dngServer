@@ -31,44 +31,45 @@ async function addData(fid, data, contextId, word) {
  */
 async function findData(conditionArr) {
     var result = null;
-    var word = null;
     await DrawDataDB.findOne(conditionArr)
         .then(function (ddata) {
-            console.dir(ddata);
             if (ddata) {
-                result = ddata.data;
-                word = ddata.cword;
+                result = {
+                    datad: ddata.data,
+                    cword: ddata.cword,
+                    guessed: ddata.guessed
+                }
             } else {
                 result = 0;
             }
         });
-    return {result: result, word: word};
-}
-
-/**
- * this function updates the draw data by
- * finding the drawdata and with condition and
- * update the value given in conditionarr
- */
-async function updateData(condition, conditionArr) {
-    var result = null;
-    await DrawDataDB.findOneAndUpdate(condition, conditionArr, null)
-        .then(function (ro) {
-            result = ro._id;
-        });
     return result;
 }
 
-/**
- * this function deletes the data
- * provided the condition array
- */
-async function deleteData(conditionArr) {
-    var process = await DrawDataDB.deleteOne(conditionArr);
-    return process.n;
-}
+    /**
+     * this function updates the draw data by
+     * finding the drawdata and with condition and
+     * update the value given in conditionarr
+     */
+    async function updateData(condition, conditionArr) {
+        var result = null;
+        await DrawDataDB.findOneAndUpdate(condition, conditionArr, null)
+            .then(function (ro) {
+                result = ro._id;
+            });
+        return result;
+    }
 
-module.exports.addData = addData;
-module.exports.findData = findData;
-module.exports.updateData = updateData;
-module.exports.deleteData = deleteData;
+    /**
+     * this function deletes the data
+     * provided the condition array
+     */
+    async function deleteData(conditionArr) {
+        var process = await DrawDataDB.deleteOne(conditionArr);
+        return process.n;
+    }
+
+    module.exports.addData = addData;
+    module.exports.findData = findData;
+    module.exports.updateData = updateData;
+    module.exports.deleteData = deleteData;

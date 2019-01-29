@@ -162,7 +162,7 @@ io.on('connection', (socket) => {
      */
     socket.on('fetchDrawingData', async function (cid, fn) {
         let fetchedData = await DrawData.findData({contextId:cid});
-        fn(JSON.parse(fetchedData.result),fetchedData.word);
+        fn(JSON.parse(fetchedData.datad),fetchedData.cword,fetchedData.guessed);
     });
 
     /**
