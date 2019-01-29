@@ -101,7 +101,7 @@ io.on('connection', (socket) => {
             .then(async function (userData) {
                 await Room.findRoom({_id: userData.rid})
                     .then(async function (roomData) {
-                        if (roomData.cword === message.toUpperCase()) {
+                        if (roomData.cword === message.trim().toLowerCase()) {
                             io.to(roomData._id).emit('getmessage', {
                                 user: userData.username,
                                 message: message + ' (Correct Guess)',
