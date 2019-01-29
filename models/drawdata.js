@@ -10,13 +10,18 @@ var db = mongoose.connection;
  * context id
  */
 async function addData(fid, data, contextId, word) {
-    var newdata = await new DrawDataDB({
-        fid: fid,
-        data: JSON.stringify(data),
-        contextId: contextId,
-        cword: word
-    });
-    var saved = await newdata.save();
+    var currentData = await findData({contextId: contextId});
+    if (currentData.result === 0) {
+        var newdata = await new DrawDataDB({
+            fid: fid,
+            data: JSON.stringify(data),
+            contextId: contextId,
+            cword: word
+        });
+        var saved = await newdata.save();
+    } else {
+        updateData({contextId: contextId}, {data: JSON.stringify(data), cword: word});
+    }
 }
 
 /**
@@ -37,7 +42,21 @@ async function findData(conditionArr) {
                 result = 0;
             }
         });
-    return {result: result,word: word};
+    return {result: result, word: word};
+}
+
+/**
+ * this function updates the draw data by
+ * finding the drawdata and with condition and
+ * update the value given in conditionarr
+ */
+async function updateData(condition, conditionArr) {
+    var result = null;
+    await DrawDataDB.findOneAndUpdate(condition, conditionArr, null)
+        .then(function (ro) {
+            result = ro._id;
+        });
+    return result;
 }
 
 /**
