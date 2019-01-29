@@ -70,4 +70,5 @@ async function deleteData(conditionArr) {
 
 module.exports.addData = addData;
 module.exports.findData = findData;
+module.exports.updateData = updateData;
 module.exports.deleteData = deleteData;

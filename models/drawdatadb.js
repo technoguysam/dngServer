@@ -17,6 +17,10 @@ var drawDataSchema = mongoose.Schema({
         type: String,
         default: null
     },
+    guessed: {
+        type: Boolean,
+        default: false
+    },
     saved_at: {
         type: Date,
         default: Date.now

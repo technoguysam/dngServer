@@ -149,6 +149,14 @@ io.on('connection', (socket) => {
     });
 
     /**
+     * This gets the call and update the guessed
+     * value to true
+     */
+    socket.on('updateComposedDrawing', function (contextId) {
+        let add = DrawData.updateData({contextId: contextId}, {guessed: true});
+    });
+
+    /**
      * This gets the context id and fetch the data from drawing data
      * table and send the response
      */
