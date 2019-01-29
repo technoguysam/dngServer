@@ -231,10 +231,10 @@ async function removeUsers(roomId) {
  * from the given array of words
  */
 function getRandomWord() {
-    var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone', 'people', 'art', 'computer',
+    var words = ['mango', 'apple', 'house', 'tree', 'glass', 'bed', 'palm', 'bottle', 'phone', 'art', 'computer',
         'music', 'television', 'camera', 'road', 'river', 'mountain', 'book', 'cigarette', 'money', 'car', 'cloud', 'guitar', 'pen'];
     return words[Math.floor(Math.random() * words.length)];
 }
 
-server.listen(process.env.PORT || 3000);
-console.log('server started and listening on port 3090');
+server.listen(process.env.PORT || 3030);
+console.log('server started and listening on port 3030');
