@@ -11,16 +11,17 @@ var db = mongoose.connection;
  */
 async function addData(fid, data, contextId, word) {
     var currentData = await findData({contextId: contextId});
-    if (currentData.result === 0) {
+    if (currentData === 0) {
         var newdata = await new DrawDataDB({
             fid: fid,
             data: JSON.stringify(data),
             contextId: contextId,
-            cword: word
+            cword: word,
+            guessed: false
         });
         var saved = await newdata.save();
     } else {
-        updateData({contextId: contextId}, {data: JSON.stringify(data), cword: word});
+        updateData({contextId: contextId}, {data: JSON.stringify(data), cword: word, guessed: false});
     }
 }
 
@@ -31,7 +32,7 @@ async function addData(fid, data, contextId, word) {
  */
 async function findData(conditionArr) {
     var result = null;
-    await DrawDataDB.findOne(conditionArr)
+    await DrawDataDB.findOneAndUpdate(conditionArr)
         .then(function (ddata) {
             if (ddata) {
                 result = {
