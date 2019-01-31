@@ -146,7 +146,6 @@ io.on('connection', (socket) => {
      * context id
      */
     socket.on('saveComposedDrawing', function (data, fid, contextId, word) {
-        console.log(contextId);
         let add = DrawData.addData(fid, data, contextId, word);
     });
 
