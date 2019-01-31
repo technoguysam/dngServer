@@ -10,19 +10,24 @@ var db = mongoose.connection;
  * context id
  */
 async function addData(fid, data, contextId, word) {
-    var currentData = await findData({'contextId': contextId});
-    if (currentData === 0) {
-        let newdata = await new DrawDataDB({
-            fid: fid,
-            data: JSON.stringify(data),
-            contextId: contextId,
-            cword: word,
-            guessed: false
-        });
-        let saved = await newdata.save();
-    } else {
-        let upd = updateData({contextId: contextId}, {data: JSON.stringify(data), cword: word, guessed: false});
-    }
+    findData({'contextId': contextId})
+        .then(async function(currentData){
+            console.log('current data', currentData);
+            if (currentData === 0) {
+                console.log('current data is 0');
+                var newdata = await new DrawDataDB({
+                    fid: fid,
+                    data: JSON.stringify(data),
+                    contextId: contextId,
+                    cword: word,
+                    guessed: false
+                });
+                var saved = await newdata.save();
+            } else {
+                console.log('current data is not 0');
+                var upd = await updateData({contextId: contextId}, {data: JSON.stringify(data), cword: word, guessed: false});
+            }
+        })
 }
 
 /**
