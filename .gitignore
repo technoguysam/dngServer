@@ -3,3 +3,4 @@ node_modules/
 .git
 nodemon.sh
 server.sh
+cc.txt

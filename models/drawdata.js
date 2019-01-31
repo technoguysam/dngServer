@@ -11,6 +11,7 @@ var db = mongoose.connection;
  */
 async function addData(fid, data, contextId, word) {
     var currentData = await findData({contextId: contextId});
+    console.log('currentData',currentData);
     if (currentData === 0) {
         var newdata = await new DrawDataDB({
             fid: fid,
