@@ -150,6 +150,22 @@ io.on('connection', (socket) => {
     });
 
     /**
+     * This gets the image coordinates and save the coordinates
+     * to the database
+     */
+    socket.on('saveFrontendDrawing', function (data) {
+        let add = DrawData.addFrontData(data);
+    });
+
+    /**
+     * This gets the saved frontend data
+     */
+    socket.on('fetchFrontendDrawing', async function (fn) {
+        let fetchedData = await DrawData.findFrontData();
+        fn(JSON.parse(fetchedData));
+    });
+
+    /**
      * This gets the call and update the guessed
      * value to true
      */
