@@ -162,6 +162,7 @@ io.on('connection', (socket) => {
      */
     socket.on('fetchFrontendDrawing', async function (fn) {
         let fetchedData = await DrawData.findFrontData();
+        console.log('frontend data',fetchedData);
         fn(JSON.parse(fetchedData));
     });
 
