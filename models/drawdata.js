@@ -1,6 +1,7 @@
 const DrawDataDB = require('./drawdatadb');
+const config = require('../config');
 var mongoose = require('mongoose');
-var dburl = 'mongodb://samundra:samundra1@ds241664.mlab.com:41664/dng';
+var dburl = config.db;
 mongoose.connect(dburl, {useNewUrlParser: true});
 var db = mongoose.connection;
 

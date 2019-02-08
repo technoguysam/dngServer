@@ -1,4 +1,5 @@
 //ssh -R sammy:80:localhost:3000 serveo.net
+const config = require('./config');
 const express = require('express');
 const routes = require('./routes/index');
 var cors = require('cors');
@@ -253,5 +254,5 @@ function getRandomWord() {
     return words[Math.floor(Math.random() * words.length)];
 }
 
-server.listen(process.env.PORT || 3030);
-console.log('server started and listening on port 3030');
+server.listen(process.env.PORT || config.port);
+console.log('server started and listening on port'+ config.port);
